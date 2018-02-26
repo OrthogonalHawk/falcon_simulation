@@ -4,3 +4,6 @@
 [submodule "submods/libfalcon_log"]
 	path = submods/libfalcon_log
 	url = git@github.com:OrthogonalHawk/libfalcon_log.git
+[submodule "submods/libfalcon_utilities"]
+	path = submods/libfalcon_utilities
+	url = git@github.com:OrthogonalHawk/libfalcon_utilities.git

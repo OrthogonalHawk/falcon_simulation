@@ -22,10 +22,12 @@ EXE=bin/falcon_simulation
 
 CC_SOURCES = \
     src/common/falcon_simulation_environment_component.cc \
+    src/common/falcon_simulation_environment_component_arg_parser.cc \
     src/falcon_simulation_main.cc \
     
 FALCON_LIBS = \
     falcon_log \
+    falcon_utilities \
 
 ###############################################################################
 # Include ../../falcon_makefiles/Makefile.apps for rules
