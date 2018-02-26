@@ -116,6 +116,14 @@ FalconComponentIdList falcon_simulation_environment_component::get_shutdown_depe
     return m_shutdown_dependency_ids;
 }
 
+/*
+ * @brief  Invoked by external manager to indicate that the next timestep is starting
+ */
+FALCON_COMPONENT_STATUS_ENUM falcon_simulation_environment_component::next_timestep_started(void)
+{
+    return transition(FALCON_COMPONENT_STATE_ENUM::WAITING_FOR_TIMESTEP_ADVANCE);
+}
+
 FALCON_COMPONENT_STATE_ENUM falcon_simulation_environment_component::get_component_state(void)
 {
     return m_component_state;
@@ -145,3 +153,55 @@ const char * falcon_simulation_environment_component::get_component_status_str(F
     return nullptr;
 }
 
+FALCON_COMPONENT_STATUS_ENUM falcon_simulation_environment_component::set_initialization_dependencies(FalconComponentIdList &dependency_id_list)
+{
+    m_initialization_dependency_ids = dependency_id_list;
+    return FALCON_COMPONENT_STATUS_ENUM::SUCCESS;
+}
+
+FALCON_COMPONENT_STATUS_ENUM falcon_simulation_environment_component::set_timestep_advance_dependencies(FalconComponentIdList &dependency_id_list)
+{
+    m_timestep_advance_dependency_ids = dependency_id_list;
+    return FALCON_COMPONENT_STATUS_ENUM::SUCCESS;
+}
+
+FALCON_COMPONENT_STATUS_ENUM falcon_simulation_environment_component::set_shutdown_dependencies(FalconComponentIdList &dependency_id_list)
+{
+    m_shutdown_dependency_ids = dependency_id_list;
+    return FALCON_COMPONENT_STATUS_ENUM::SUCCESS;
+}
+
+FALCON_COMPONENT_STATUS_ENUM falcon_simulation_environment_component::transition(FALCON_COMPONENT_STATE_ENUM new_state)
+{
+    FALCON_COMPONENT_STATUS_ENUM ret = FALCON_COMPONENT_STATUS_ENUM::SUCCESS;
+
+    if (m_component_state != FALCON_COMPONENT_STATE_ENUM::SHUTDOWN_COMPLETE)
+    {
+        switch (new_state)
+        {
+        case FALCON_COMPONENT_STATE_ENUM::INITIALIZED:
+        case FALCON_COMPONENT_STATE_ENUM::WAITING_FOR_TIMESTEP_ADVANCE:
+        case FALCON_COMPONENT_STATE_ENUM::TIMESTEP_ADVANCED:
+        case FALCON_COMPONENT_STATE_ENUM::READY_FOR_SHUTDOWN:
+        case FALCON_COMPONENT_STATE_ENUM::SHUTDOWN_COMPLETE:
+            break;
+
+        case FALCON_COMPONENT_STATE_ENUM::UNINITIALIZED:
+        default:
+            ret = FALCON_COMPONENT_STATUS_ENUM::UNSUPPORTED_COMPONENT_STATE;
+            break;
+        }
+    }
+    else
+    {
+        /* once the SHUTDOWN_COMPLETE state has been entered it cannot be left */
+        ret = FALCON_COMPONENT_STATUS_ENUM::UNSUPPORTED_COMPONENT_STATE_TRANSITION;
+    }
+
+    if (ret == FALCON_COMPONENT_STATUS_ENUM::SUCCESS)
+    {
+        m_component_state = new_state;
+    }
+
+    return ret;
+}

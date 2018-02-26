@@ -112,6 +112,7 @@ public:
     FalconComponentIdList get_shutdown_dependency_ids(void);
 
     virtual FALCON_COMPONENT_STATUS_ENUM initialize(FalconComponentList &dependencies) = 0;
+    FALCON_COMPONENT_STATUS_ENUM next_timestep_started(void);
     virtual FALCON_COMPONENT_STATUS_ENUM advance_timestep(uint32_t &current_timestep, FalconComponentList dependencies) = 0;
     virtual FALCON_COMPONENT_STATUS_ENUM shutdown(FalconComponentList &dependencies) = 0;
     virtual int32_t get_timestep_reward(void) = 0;
